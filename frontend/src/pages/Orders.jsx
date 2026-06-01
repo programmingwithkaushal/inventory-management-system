@@ -68,7 +68,7 @@ const Orders = () => {
   return (
     <div className="animate-reveal">
       <div className="header-actions">
-        <h1 className="page-title" style={{margin: 0}}>Order Fulfillment & Tracking</h1>
+        <h1 className="page-title" style={{margin: 0}}>Orders</h1>
       </div>
 
       <div className="card" style={{marginBottom: '3rem'}}>

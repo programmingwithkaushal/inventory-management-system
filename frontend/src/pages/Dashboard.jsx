@@ -95,7 +95,7 @@ const Dashboard = () => {
 
   return (
     <div className="animate-reveal" style={{ position: 'relative' }}>
-      <h1 className="page-title">Command Center & Analytics</h1>
+      <h1 className="page-title">Dashboard</h1>
       
       <div className="dashboard-grid">
         <div className="card stat-card" style={{ animationDelay: '0.1s' }}>

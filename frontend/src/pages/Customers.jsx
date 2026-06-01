@@ -58,7 +58,7 @@ const Customers = () => {
   return (
     <div className="animate-reveal">
       <div className="header-actions">
-        <h1 className="page-title" style={{margin: 0}}>Customer Relationship Management (CRM)</h1>
+        <h1 className="page-title" style={{margin: 0}}>Customers</h1>
       </div>
 
       <div className="card" style={{marginBottom: '3rem'}}>

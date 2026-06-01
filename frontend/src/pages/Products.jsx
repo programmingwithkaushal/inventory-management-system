@@ -88,7 +88,7 @@ const Products = () => {
   return (
     <div className="animate-reveal">
       <div className="header-actions">
-        <h1 className="page-title" style={{margin: 0}}>Product Catalog Management</h1>
+        <h1 className="page-title" style={{margin: 0}}>Products</h1>
       </div>
 
       <div className="card" style={{marginBottom: '3rem'}}>
