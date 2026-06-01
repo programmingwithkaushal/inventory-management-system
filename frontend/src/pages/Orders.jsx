@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
-import { ShoppingBag } from 'lucide-react';
+import { ShoppingBag, Search } from 'lucide-react';
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -9,6 +9,7 @@ const Orders = () => {
   
   const [formData, setFormData] = useState({ customer_id: '', product_id: '', quantity: '' });
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const fetchData = async () => {
     try {
@@ -59,6 +60,11 @@ const Orders = () => {
   const getCustomerName = (id) => customers.find(c => c.id === id)?.full_name || 'Unknown';
   const getProductName = (id) => products.find(p => p.id === id)?.name || 'Unknown';
 
+  const filteredOrders = orders.filter(o => 
+    o.id.toString().includes(searchQuery) ||
+    `ord-${o.id}`.includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="animate-reveal">
       <div className="header-actions">
@@ -100,6 +106,17 @@ const Orders = () => {
         </form>
       </div>
 
+      <div style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '0.5rem 1rem', width: '300px' }}>
+        <Search size={18} color="var(--text-secondary)" style={{ marginRight: '0.5rem' }} />
+        <input 
+          type="text" 
+          placeholder="Search by Order ID..." 
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          style={{ background: 'transparent', border: 'none', color: 'var(--text-primary)', outline: 'none', width: '100%' }}
+        />
+      </div>
+
       <div className="table-container">
         <table>
           <thead>
@@ -113,7 +130,7 @@ const Orders = () => {
             </tr>
           </thead>
           <tbody>
-            {orders.map(o => (
+            {filteredOrders.map(o => (
               <tr key={o.id}>
                 <td style={{ fontFamily: 'monospace', color: 'var(--text-secondary)' }}>ORD-{o.id.toString().padStart(4, '0')}</td>
                 <td style={{ fontWeight: 500 }}>{getCustomerName(o.customer_id)}</td>
@@ -125,8 +142,8 @@ const Orders = () => {
                 </td>
               </tr>
             ))}
-            {orders.length === 0 && (
-              <tr><td colSpan="6" style={{textAlign: 'center', padding: '3rem', color: 'var(--text-secondary)'}}>No active orders.</td></tr>
+            {filteredOrders.length === 0 && (
+              <tr><td colSpan="6" style={{textAlign: 'center', padding: '3rem', color: 'var(--text-secondary)'}}>No orders match your search.</td></tr>
             )}
           </tbody>
         </table>

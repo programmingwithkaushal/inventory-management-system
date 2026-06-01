@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
-import { UserPlus } from 'lucide-react';
+import { UserPlus, Search } from 'lucide-react';
 
 const Customers = () => {
   const [customers, setCustomers] = useState([]);
   const [formData, setFormData] = useState({ full_name: '', email: '', phone_number: '' });
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const fetchCustomers = async () => {
     try {
@@ -48,6 +49,12 @@ const Customers = () => {
     }
   };
 
+  const filteredCustomers = customers.filter(c => 
+    c.id.toString().includes(searchQuery) || 
+    c.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    c.full_name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="animate-reveal">
       <div className="header-actions">
@@ -79,10 +86,22 @@ const Customers = () => {
         </form>
       </div>
 
+      <div style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '0.5rem 1rem', width: '300px' }}>
+        <Search size={18} color="var(--text-secondary)" style={{ marginRight: '0.5rem' }} />
+        <input 
+          type="text" 
+          placeholder="Search by ID, Name or Email..." 
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          style={{ background: 'transparent', border: 'none', color: 'var(--text-primary)', outline: 'none', width: '100%' }}
+        />
+      </div>
+
       <div className="table-container">
         <table>
           <thead>
             <tr>
+              <th>ID</th>
               <th>Client Name</th>
               <th>Email Address</th>
               <th>Contact Number</th>
@@ -90,8 +109,9 @@ const Customers = () => {
             </tr>
           </thead>
           <tbody>
-            {customers.map(c => (
+            {filteredCustomers.map(c => (
               <tr key={c.id}>
+                <td style={{ fontFamily: 'monospace', color: 'var(--text-secondary)' }}>#{c.id}</td>
                 <td style={{ fontWeight: 500 }}>{c.full_name}</td>
                 <td style={{ color: 'var(--text-secondary)' }}>{c.email}</td>
                 <td style={{ color: 'var(--text-secondary)' }}>{c.phone_number}</td>
@@ -100,8 +120,8 @@ const Customers = () => {
                 </td>
               </tr>
             ))}
-            {customers.length === 0 && (
-              <tr><td colSpan="4" style={{textAlign: 'center', padding: '3rem', color: 'var(--text-secondary)'}}>No clients registered yet.</td></tr>
+            {filteredCustomers.length === 0 && (
+              <tr><td colSpan="5" style={{textAlign: 'center', padding: '3rem', color: 'var(--text-secondary)'}}>No clients match your search.</td></tr>
             )}
           </tbody>
         </table>

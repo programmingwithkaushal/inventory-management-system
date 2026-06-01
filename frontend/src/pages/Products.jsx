@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
-import { Plus, Edit2, X } from 'lucide-react';
+import { Plus, Edit2, X, Search } from 'lucide-react';
 
 const Products = () => {
   const [products, setProducts] = useState([]);
   const [formData, setFormData] = useState({ name: '', sku: '', price: '', quantity: '' });
   const [error, setError] = useState(null);
   const [editingId, setEditingId] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const fetchProducts = async () => {
     try {
@@ -80,6 +81,10 @@ const Products = () => {
     }
   };
 
+  const filteredProducts = products.filter(p => 
+    p.sku.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="animate-reveal">
       <div className="header-actions">
@@ -122,6 +127,17 @@ const Products = () => {
         </form>
       </div>
 
+      <div style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '0.5rem 1rem', width: '300px' }}>
+        <Search size={18} color="var(--text-secondary)" style={{ marginRight: '0.5rem' }} />
+        <input 
+          type="text" 
+          placeholder="Search by SKU..." 
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          style={{ background: 'transparent', border: 'none', color: 'var(--text-primary)', outline: 'none', width: '100%' }}
+        />
+      </div>
+
       <div className="table-container">
         <table>
           <thead>
@@ -134,7 +150,7 @@ const Products = () => {
             </tr>
           </thead>
           <tbody>
-            {products.map(p => (
+            {filteredProducts.map(p => (
               <tr key={p.id}>
                 <td style={{ fontFamily: 'monospace', color: 'var(--text-secondary)' }}>{p.sku}</td>
                 <td style={{ fontWeight: 500 }}>{p.name}</td>
@@ -150,8 +166,8 @@ const Products = () => {
                 </td>
               </tr>
             ))}
-            {products.length === 0 && (
-              <tr><td colSpan="5" style={{textAlign: 'center', padding: '3rem', color: 'var(--text-secondary)'}}>No products found in inventory.</td></tr>
+            {filteredProducts.length === 0 && (
+              <tr><td colSpan="5" style={{textAlign: 'center', padding: '3rem', color: 'var(--text-secondary)'}}>No products match your search.</td></tr>
             )}
           </tbody>
         </table>
