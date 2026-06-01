@@ -34,3 +34,10 @@ class Order(Base):
 
     customer = relationship("Customer", back_populates="orders")
     product = relationship("Product", back_populates="orders")
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True)
+    hashed_password = Column(String)

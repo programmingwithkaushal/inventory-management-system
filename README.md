@@ -12,7 +12,7 @@ A production-ready, containerized full-stack application built for seamless inve
 **Additional feature: JWT-based authentication.**
 The entire application is securely protected behind a custom JWT Authentication layer. Unauthenticated users are strictly blocked and redirected to a custom-built Login portal.
 
-- Environment-based credentials allow for rapid secure deployments.
+- Fully database-backed multi-user authentication with secure `bcrypt` password hashing.
 - API endpoints are protected using FastAPI `Depends(get_current_user)`.
 - Frontend utilizes local storage and Axios interceptors for smooth session management.
 - Features a beautiful glassmorphic login interface: "Welcome to **Inventory Management**"
@@ -33,7 +33,7 @@ The entire application is securely protected behind a custom JWT Authentication 
 docker compose up --build
 ```
 4. Access the frontend at `http://localhost:5173`
-5. Login using the default credentials specified in your `.env` (admin / secret).
+5. Use the backend `/docs` endpoint (or an API client) to `POST` to `/register` and create your first administrator account, then log in via the frontend!
 
 ## Submission Artifacts
 - **Docker Hub Backend Image**: [codingwithkaushal/inventory-backend](https://hub.docker.com/r/codingwithkaushal/inventory-backend)
