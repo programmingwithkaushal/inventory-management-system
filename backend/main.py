@@ -1,9 +1,11 @@
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from typing import List
+from datetime import timedelta
 
-import models, schemas, crud
+import models, schemas, crud, auth
 from database import engine, get_db
 
 models.Base.metadata.create_all(bind=engine)
@@ -18,31 +20,45 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.post("/token", response_model=schemas.Token)
+def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+    if form_data.username != auth.ADMIN_USERNAME or form_data.password != auth.ADMIN_PASSWORD:
+        raise HTTPException(
+            status_code=401,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    access_token_expires = timedelta(minutes=auth.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = auth.create_access_token(
+        data={"sub": form_data.username}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+
 # Products
 @app.post("/products", response_model=schemas.Product)
-def create_product(product: schemas.ProductCreate, db: Session = Depends(get_db)):
+def create_product(product: schemas.ProductCreate, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
     return crud.create_product(db=db, product=product)
 
 @app.get("/products", response_model=List[schemas.Product])
-def read_products(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def read_products(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
     return crud.get_products(db, skip=skip, limit=limit)
 
 @app.get("/products/{id}", response_model=schemas.Product)
-def read_product(id: int, db: Session = Depends(get_db)):
+def read_product(id: int, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
     db_product = crud.get_product(db, product_id=id)
     if db_product is None:
         raise HTTPException(status_code=404, detail="Product not found")
     return db_product
 
 @app.put("/products/{id}", response_model=schemas.Product)
-def update_product(id: int, product: schemas.ProductUpdate, db: Session = Depends(get_db)):
+def update_product(id: int, product: schemas.ProductUpdate, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
     db_product = crud.update_product(db, product_id=id, product_update=product)
     if db_product is None:
         raise HTTPException(status_code=404, detail="Product not found")
     return db_product
 
 @app.delete("/products/{id}")
-def delete_product(id: int, db: Session = Depends(get_db)):
+def delete_product(id: int, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
     db_product = crud.delete_product(db, product_id=id)
     if db_product is None:
         raise HTTPException(status_code=404, detail="Product not found")
@@ -50,22 +66,22 @@ def delete_product(id: int, db: Session = Depends(get_db)):
 
 # Customers
 @app.post("/customers", response_model=schemas.Customer)
-def create_customer(customer: schemas.CustomerCreate, db: Session = Depends(get_db)):
+def create_customer(customer: schemas.CustomerCreate, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
     return crud.create_customer(db=db, customer=customer)
 
 @app.get("/customers", response_model=List[schemas.Customer])
-def read_customers(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def read_customers(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
     return crud.get_customers(db, skip=skip, limit=limit)
 
 @app.get("/customers/{id}", response_model=schemas.Customer)
-def read_customer(id: int, db: Session = Depends(get_db)):
+def read_customer(id: int, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
     db_customer = crud.get_customer(db, customer_id=id)
     if db_customer is None:
         raise HTTPException(status_code=404, detail="Customer not found")
     return db_customer
 
 @app.delete("/customers/{id}")
-def delete_customer(id: int, db: Session = Depends(get_db)):
+def delete_customer(id: int, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
     db_customer = crud.delete_customer(db, customer_id=id)
     if db_customer is None:
         raise HTTPException(status_code=404, detail="Customer not found")
@@ -73,22 +89,22 @@ def delete_customer(id: int, db: Session = Depends(get_db)):
 
 # Orders
 @app.post("/orders", response_model=schemas.Order)
-def create_order(order: schemas.OrderCreate, db: Session = Depends(get_db)):
+def create_order(order: schemas.OrderCreate, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
     return crud.create_order(db=db, order=order)
 
 @app.get("/orders", response_model=List[schemas.Order])
-def read_orders(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def read_orders(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
     return crud.get_orders(db, skip=skip, limit=limit)
 
 @app.get("/orders/{id}", response_model=schemas.Order)
-def read_order(id: int, db: Session = Depends(get_db)):
+def read_order(id: int, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
     db_order = crud.get_order(db, order_id=id)
     if db_order is None:
         raise HTTPException(status_code=404, detail="Order not found")
     return db_order
 
 @app.delete("/orders/{id}")
-def delete_order(id: int, db: Session = Depends(get_db)):
+def delete_order(id: int, db: Session = Depends(get_db), current_user: str = Depends(auth.get_current_user)):
     db_order = crud.delete_order(db, order_id=id)
     if db_order is None:
         raise HTTPException(status_code=404, detail="Order not found")
