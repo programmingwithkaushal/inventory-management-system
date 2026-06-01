@@ -36,8 +36,8 @@ class Customer(CustomerBase):
 
 # Order Schemas
 class OrderBase(BaseModel):
-    customer_id: int
-    product_id: int
+    customer_id: Optional[int] = None
+    product_id: Optional[int] = None
     quantity: int
 
 class OrderCreate(OrderBase):

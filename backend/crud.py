@@ -50,6 +50,8 @@ def update_product(db: Session, product_id: int, product_update: schemas.Product
 def delete_product(db: Session, product_id: int):
     db_product = get_product(db, product_id)
     if db_product:
+        if len(db_product.orders) > 0:
+            raise HTTPException(status_code=400, detail="Cannot delete product: Please cancel all related orders first.")
         db.delete(db_product)
         db.commit()
     return db_product
@@ -78,6 +80,8 @@ def create_customer(db: Session, customer: schemas.CustomerCreate):
 def delete_customer(db: Session, customer_id: int):
     db_customer = get_customer(db, customer_id)
     if db_customer:
+        if len(db_customer.orders) > 0:
+            raise HTTPException(status_code=400, detail="Cannot delete client: Please cancel all related orders first.")
         db.delete(db_customer)
         db.commit()
     return db_customer

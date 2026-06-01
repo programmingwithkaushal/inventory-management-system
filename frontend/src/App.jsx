@@ -4,31 +4,41 @@ import Dashboard from './pages/Dashboard';
 import Products from './pages/Products';
 import Customers from './pages/Customers';
 import Orders from './pages/Orders';
-import { LayoutDashboard, Package, Users, ShoppingCart } from 'lucide-react';
+import { LayoutDashboard, Package, Users, ShoppingCart, Box } from 'lucide-react';
 
 function App() {
+  React.useEffect(() => {
+    window.history.pushState(null, null, window.location.href);
+    window.onpopstate = function () {
+      window.history.go(1);
+    };
+  }, []);
+
   return (
     <Router>
       <div className="app-container">
         <aside className="sidebar">
           <div className="sidebar-logo">
-            📦 IO Manager
+            <div className="brand-icon">
+              <Box size={24} color="#F5F7FA" />
+            </div>
+            Nexus OS
           </div>
-          <nav>
-            <NavLink to="/" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
-              <LayoutDashboard size={20} />
+          <nav className="sidebar-nav">
+            <NavLink replace to="/" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
+              <LayoutDashboard size={18} />
               Dashboard
             </NavLink>
-            <NavLink to="/products" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
-              <Package size={20} />
+            <NavLink replace to="/products" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
+              <Package size={18} />
               Products
             </NavLink>
-            <NavLink to="/customers" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
-              <Users size={20} />
+            <NavLink replace to="/customers" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
+              <Users size={18} />
               Customers
             </NavLink>
-            <NavLink to="/orders" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
-              <ShoppingCart size={20} />
+            <NavLink replace to="/orders" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
+              <ShoppingCart size={18} />
               Orders
             </NavLink>
           </nav>

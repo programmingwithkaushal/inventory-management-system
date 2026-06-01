@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
+import { ShoppingBag } from 'lucide-react';
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -55,21 +56,23 @@ const Orders = () => {
     }
   };
 
+  const getCustomerName = (id) => customers.find(c => c.id === id)?.full_name || 'Unknown';
+  const getProductName = (id) => products.find(p => p.id === id)?.name || 'Unknown';
+
   return (
-    <div>
+    <div className="animate-reveal">
       <div className="header-actions">
-        <h1 className="page-title" style={{margin: 0}}>Manage Orders</h1>
+        <h1 className="page-title" style={{margin: 0}}>Order Management</h1>
       </div>
 
-      <div className="card" style={{marginBottom: '2rem'}}>
-        <h3>Create New Order</h3>
-        <br />
+      <div className="card" style={{marginBottom: '3rem'}}>
+        <h3 style={{ marginBottom: '1.5rem', color: 'var(--text-primary)' }}>Create Fulfillment Order</h3>
         {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSubmit} className="form-grid">
           <div className="form-group">
-            <label className="form-label">Customer</label>
+            <label className="form-label">Client</label>
             <select className="form-control" name="customer_id" value={formData.customer_id} onChange={handleChange} required>
-              <option value="">Select Customer</option>
+              <option value="" disabled>Select Client...</option>
               {customers.map(c => (
                 <option key={c.id} value={c.id}>{c.full_name} ({c.email})</option>
               ))}
@@ -78,18 +81,21 @@ const Orders = () => {
           <div className="form-group">
             <label className="form-label">Product</label>
             <select className="form-control" name="product_id" value={formData.product_id} onChange={handleChange} required>
-              <option value="">Select Product</option>
+              <option value="" disabled>Select Product...</option>
               {products.map(p => (
                 <option key={p.id} value={p.id}>{p.name} (Stock: {p.quantity} - ${p.price})</option>
               ))}
             </select>
           </div>
-          <div className="form-group">
-            <label className="form-label">Quantity</label>
-            <input className="form-control" type="number" min="1" name="quantity" value={formData.quantity} onChange={handleChange} required />
-          </div>
           <div className="form-group" style={{gridColumn: '1 / -1'}}>
-            <button type="submit" className="btn btn-primary">Place Order</button>
+            <label className="form-label">Quantity</label>
+            <input className="form-control" type="number" min="1" name="quantity" placeholder="1" value={formData.quantity} onChange={handleChange} required style={{ width: '50%' }} />
+          </div>
+          <div className="form-group" style={{gridColumn: '1 / -1', marginTop: '1rem'}}>
+            <button type="submit" className="btn btn-primary" style={{ width: 'max-content' }}>
+              <ShoppingBag size={18} />
+              Process Order
+            </button>
           </div>
         </form>
       </div>
@@ -99,28 +105,28 @@ const Orders = () => {
           <thead>
             <tr>
               <th>Order ID</th>
-              <th>Customer ID</th>
-              <th>Product ID</th>
-              <th>Quantity</th>
+              <th>Client</th>
+              <th>Product</th>
+              <th>Qty</th>
               <th>Total Amount</th>
-              <th>Actions</th>
+              <th style={{ textAlign: 'right' }}>Actions</th>
             </tr>
           </thead>
           <tbody>
             {orders.map(o => (
               <tr key={o.id}>
-                <td>{o.id}</td>
-                <td>{o.customer_id}</td>
-                <td>{o.product_id}</td>
+                <td style={{ fontFamily: 'monospace', color: 'var(--text-secondary)' }}>ORD-{o.id.toString().padStart(4, '0')}</td>
+                <td style={{ fontWeight: 500 }}>{getCustomerName(o.customer_id)}</td>
+                <td>{getProductName(o.product_id)}</td>
                 <td>{o.quantity}</td>
-                <td>${o.total_amount.toFixed(2)}</td>
-                <td>
-                  <button className="btn btn-danger" onClick={() => handleDelete(o.id)}>Cancel Order</button>
+                <td style={{ fontWeight: 600 }}>${o.total_amount.toFixed(2)}</td>
+                <td style={{ textAlign: 'right' }}>
+                  <button className="btn btn-danger" style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }} onClick={() => handleDelete(o.id)}>Cancel</button>
                 </td>
               </tr>
             ))}
             {orders.length === 0 && (
-              <tr><td colSpan="6" style={{textAlign: 'center'}}>No orders found.</td></tr>
+              <tr><td colSpan="6" style={{textAlign: 'center', padding: '3rem', color: 'var(--text-secondary)'}}>No active orders.</td></tr>
             )}
           </tbody>
         </table>
