@@ -1,41 +1,68 @@
-# Inventory & Order Management System
+# 📦 Inventory & Order Management System
 
-A production-ready, containerized full-stack application built for seamless inventory and fulfillment tracking. This project features a robust backend API and a premium, responsive React dashboard.
+Welcome to the **Inventory & Order Management System**! This is a complete, production-ready software solution designed to help businesses effortlessly track their products, manage their customers, and fulfill their orders in real-time. 
 
-## Tech Stack
-- **Frontend**: React, Vite, React Router, Recharts, Lucide Icons
+Built with modern web technologies, this platform is incredibly fast, responsive, and easy to use on any device.
+
+<div align="center">
+  <img src="assets/demo.gif" alt="System Demo Walkthrough" width="800"/>
+</div>
+
+---
+
+## 🌟 Key Features & Interface
+
+### 📊 Dashboard & Analytics
+Get a bird's-eye view of your entire business. The dashboard automatically calculates your total revenue, counts your active orders, and alerts you when any product stock drops below 10 items.
+<div align="center">
+  <img src="assets/dashboard.png" alt="Dashboard View" width="800"/>
+</div>
+
+### 📦 Products
+Manage your entire inventory catalog. Add new products, update pricing, and restock items instantly. The system prevents you from accidentally deleting a product if it is currently tied to an active customer order.
+<div align="center">
+  <img src="assets/products.png" alt="Products View" width="800"/>
+</div>
+
+### 👥 Customers
+A built-in CRM (Customer Relationship Manager) to keep track of everyone buying your products. Store contact information and manage client details securely.
+<div align="center">
+  <img src="assets/customers.png" alt="Customers View" width="800"/>
+</div>
+
+### 🚚 Orders
+Track the fulfillment pipeline from start to finish. When an order is placed, the system automatically deducts the exact quantity from your product inventory in real-time.
+<div align="center">
+  <img src="assets/orders.png" alt="Orders View" width="800"/>
+</div>
+
+---
+
+## 🔒 Multi-Tenant Security & Authentication
+This application features a **Multi-Tenant SaaS Architecture**. 
+- Every user must register and log in to an account to access the system. 
+- All data is heavily isolated; a user can only ever see, edit, or delete the products and orders that *they* personally created. 
+- Passwords are securely hashed using `bcrypt` and sessions are managed via JWT (JSON Web Tokens).
+
+<div align="center">
+  <img src="assets/login.png" alt="Login Portal" width="800"/>
+</div>
+
+---
+
+## 🛠️ Technology Stack
+- **Frontend**: React, Vite, Tailwind CSS, Recharts (for analytics), Lucide React (for icons)
 - **Backend**: Python, FastAPI, SQLAlchemy, PostgreSQL
-- **Infrastructure**: Docker, Docker Compose
-- **Deployment**: Render (Backend & DB), Vercel (Frontend)
+- **Security**: python-jose (JWT), passlib (bcrypt)
+- **Deployment**: Vercel (Frontend), Render (Backend & Database), Docker
 
-## 🌟 Bonus Feature: JWT Authentication
-**Additional feature: JWT-based authentication.**
-The entire application is securely protected behind a custom JWT Authentication layer. Unauthenticated users are strictly blocked and redirected to a custom-built Login portal.
+## 🚀 Running Locally
 
-- Fully database-backed multi-user authentication with secure `bcrypt` password hashing.
-- API endpoints are protected using FastAPI `Depends(get_current_user)`.
-- Frontend utilizes local storage and Axios interceptors for smooth session management.
-- Features a beautiful glassmorphic login interface: "Welcome to **Inventory Management**"
-
-## Features
-- **Dashboard Analytics**: Real-time charts for stock levels and revenue tracking.
-- **Relational Integrity**: Strict backend constraints prevent accidental deletion of products/customers with active orders.
-- **Inventory Alerts**: Built-in modal alerts for low-stock items.
-- **Search Capabilities**: Instant, real-time table filtering across all entities.
-- **Premium Aesthetics**: Fully responsive Dark Mode UI featuring glassmorphism and micro-animations.
-
-## Running Locally
-
-1. Clone the repository
-2. Ensure Docker and Docker Compose are installed.
-3. Run the application:
+1. Clone the repository to your machine.
+2. Ensure **Docker Desktop** is running.
+3. Start the entire application (Database, Backend, and Frontend) with one command:
 ```bash
-docker compose up --build
+docker-compose up --build
 ```
-4. Access the frontend at `http://localhost:5173`
-5. Use the backend `/docs` endpoint (or an API client) to `POST` to `/register` and create your first administrator account, then log in via the frontend!
-
-## Submission Artifacts
-- **Docker Hub Backend Image**: [codingwithkaushal/inventory-backend](https://hub.docker.com/r/codingwithkaushal/inventory-backend)
-- **Live Frontend**: Deployed on Vercel
-- **Live Backend**: Deployed on Render
+4. Open your browser and go to `http://localhost:5173`.
+5. Click **Sign Up** to create your first account and start managing your inventory!
