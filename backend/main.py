@@ -8,7 +8,6 @@ from datetime import timedelta
 import models, schemas, crud, auth
 from database import engine, get_db
 
-models.Base.metadata.drop_all(bind=engine)
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Inventory & Order Management API")
